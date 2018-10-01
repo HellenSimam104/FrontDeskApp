@@ -86,10 +86,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-/**
- *
- * @author Josh
- */
+
 public class LoginController implements Initializable {
     
     @FXML
