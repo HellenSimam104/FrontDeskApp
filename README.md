@@ -68,3 +68,80 @@ public class login {
 
     
 }
+
+package usersdatabase;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+/**
+ *
+ * @author Josh
+ */
+public class LoginController implements Initializable {
+    
+    @FXML
+    private JFXTextField usernm;
+    @FXML
+    private JFXPasswordField pswd;
+    @FXML
+    private JFXButton login;
+    @FXML
+    private JFXButton reg;
+    
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        // TODO
+    }    
+
+    @FXML
+    private void registerHandler(ActionEvent event) {
+    }
+
+    @FXML
+    private void LoginHandler(ActionEvent event) {
+       
+        String sql="SELECT * FROM users WHERE Username=? AND Password=?";
+        DatabaseConnection databaseConnection=new DatabaseConnection();
+        try {
+            try (Connection connection = databaseConnection.getConnection()) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, usernm.getText());
+                preparedStatement.setString(2, pswd.getText());
+                ResultSet resultset = preparedStatement.executeQuery();
+                if (resultset.next()) {
+                    System.out.println("logged");
+                    try {
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
+                        Parent root1 = (Parent) fxmlLoader.load();
+                        Stage stage = new Stage();
+                        stage.setScene(new Scene(root1));
+                        stage.show();
+                        Stage loStage=(Stage) login.getScene().getWindow();
+                        loStage.hide();
+                    } catch (Exception e) {
+                    }
+                }
+                else
+                {
+                    System.out.println("not logged");
+                }}
+         
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+    
+}
