@@ -142,3 +142,94 @@ public class LoginController implements Initializable {
     }
     
 }
+package FrontDesk;
+import FrontDeskApp.Database.DatabaseConnection;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
+public class ViewUserController implements Initializable {
+
+    @FXML
+    private TableView jtable;
+    @FXML
+    private TableColumn<User,String> fullNameColumn;
+    @FXML
+    private TableColumn<User,String> userNameColumn;
+    @FXML
+    private TableColumn<User,String> genderColumn;
+    @FXML
+    private TableColumn<User,String> passwordColumn;
+    @FXML
+    private ImageView back;
+
+    /**
+     * Initializes the controller class.
+     * @param url
+     * @param rb
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        // TODO
+  
+        ObservableList<User> observableList=FXCollections.observableArrayList();
+       
+        String sql="SELECT * FROM users";
+        User user;
+        DatabaseConnection databaseConnection=new DatabaseConnection();
+        try {
+            try (Connection connection = databaseConnection.getConnection()) {
+                Statement statement=connection.createStatement();
+                ResultSet resultSet=statement.executeQuery(sql);
+                while(resultSet.next()){
+                    user=new User(resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5));
+                    observableList.add(user);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(ViewUserController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+        }
+        
+        fullNameColumn.setCellValueFactory(new PropertyValueFactory<>("fname"));
+        genderColumn.setCellValueFactory(new PropertyValueFactory<>("gender"));
+        passwordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
+        userNameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+        jtable.setItems(observableList);
+        }
+
+    @FXML
+    private void dashboardhandler(MouseEvent event) {
+        try{
+         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
+                Parent root1 = (Parent) fxmlLoader.load();
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root1));  
+                stage.show();
+                Stage loStage=(Stage) jtable.getScene().getWindow();
+                loStage.hide();
+                } catch (IOException e) {
+                }
+    }
+    }    
+    
